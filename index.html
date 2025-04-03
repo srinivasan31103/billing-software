@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Receipt</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        .receipt {
+            border: 2px dashed black;
+            display: inline-block;
+            padding: 20px;
+            text-align: left;
+            width: 300px;
+        }
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .info {
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .info label {
+            flex: 1;
+        }
+        .info input {
+            flex: 2;
+            text-align: left;
+        }
+        .qr {
+            text-align: center;
+            margin-top: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .img1 {
+            margin-left: 130px;
+        }
+        .a1 {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <!-- Logo -->
+        <div><img src="./asset/New folder/logo1.jpg" width="50px" class="img1" alt="Logo"></div>
+        <!-- Title -->
+        <div class="title">SRII THINDAL MURUGAN CHITFUND PVT LTD</div>
+        <hr>
+        <!-- Email and Mobile Number -->
+        <div class="a1">
+            <h6>sriithindalmurugan@gmail.com</h6>
+            <h6>637 4433 241</h6>
+        </div>
+        <!-- Input Fields -->
+        <div class="info"><label for="cusNum">Cus Num - </label><input type="text" id="cusNum"></div>
+        <div class="info"><label for="name">Name - </label><input type="text" id="name"></div>
+        <div class="info"><label for="area">Area - </label><input type="text" id="area"></div>
+        <hr>
+        <div class="info"><label for="grpNum">Grp Num - </label><input type="text" id="grpNum"></div>
+        <div class="info"><label for="dueDate">Due Date - </label><input type="date" id="dueDate"></div>
+        <div class="info"><label for="dueAmount">Due Amount - </label><input type="number" id="dueAmount"></div>
+        <div class="info"><label for="paidDate">Paid Date - </label><input type="date" id="paidDate"></div>
+        <hr>
+        <!-- Generate QR Code Button -->
+        <button onclick="updateQR()">Generate QR Code</button>
+        <!-- QR Code Section -->
+        <div class="qr">
+            <p>Scan this QR code for UPI Payment</p>
+            <img id="qrCode" src="" alt="QR Code">
+            <p>Thank you for your payment!</p>
+        </div>
+    </div>
+
+    <script>
+        // Set default value for Due Date to the 10th of the current month and year
+        window.onload = function() {
+            const dueDateInput = document.getElementById('dueDate');
+            const today = new Date();
+            const defaultDueDate = new Date(today.getFullYear(), today.getMonth(), 10); // 10th of the current month
+            const formattedDate = defaultDueDate.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+            dueDateInput.value = formattedDate;
+        };
+
+        // Function to generate QR Code
+        function updateQR() {
+            let cusNum = document.getElementById('cusNum').value;
+            let name = document.getElementById('name').value;
+            let area = document.getElementById('area').value;
+            let grpNum = document.getElementById('grpNum').value;
+            let dueDate = document.getElementById('dueDate').value;
+            let dueAmount = document.getElementById('dueAmount').value;
+            let paidDate = document.getElementById('paidDate').value;
+
+            // Validate input fields
+            if (!cusNum || !name || !area || !grpNum || !dueDate || !dueAmount || !paidDate) {
+                alert("Please fill all fields before generating the QR code.");
+                return;
+            }
+
+            // Generate QR code data
+            let qrData = `Customer: ${cusNum}, Name: ${name}, Area: ${area}, Group: ${grpNum}, Due Date: ${dueDate}, Due Amount: ${dueAmount}, Paid Date: ${paidDate}`;
+            let qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+            document.getElementById('qrCode').src = qrCodeUrl;
+        }
+    </script>
+</body>
+</html>
