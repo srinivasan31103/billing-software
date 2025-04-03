@@ -36,6 +36,7 @@
         .qr {
             text-align: center;
             margin-top: 10px;
+            
         }
         button {
             margin-top: 10px;
@@ -49,12 +50,39 @@
             display: flex;
             justify-content: space-between;
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .a4{
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="receipt">
+    <div class="receipt" id="receipt">
         <!-- Logo -->
-        <div><img src="./asset/New folder/logo1.jpg" width="50px" class="img1" alt="Logo"></div>
+        <div><img src="./asset/New folder/logo1.jpg" width="80px" class="img1" alt="Logo"></div>
         <!-- Title -->
         <div class="title">SRII THINDAL MURUGAN CHITFUND PVT LTD</div>
         <hr>
@@ -75,7 +103,16 @@
         <div class="info"><label for="paidDate">Paid Date - </label><input type="date" id="paidDate"></div>
         <hr>
         <!-- Generate QR Code Button -->
-        <button onclick="updateQR()">Generate QR Code</button>
+        <button onclick="updateQR()" class="a4">Generate QR Code</button>
+        <!-- Dropdown Button -->
+        <div class="dropdown">
+            <button>Share or Save</button>
+            <div class="dropdown-content">
+                <a href="#" onclick="shareViaWhatsApp()">Share via WhatsApp</a>
+                <a href="#" onclick="shareViaSMS()">Share via SMS</a>
+                <a href="#" onclick="saveAsPDF()">Save as PDF</a>
+            </div>
+        </div>
         <!-- QR Code Section -->
         <div class="qr">
             <p>Scan this QR code for UPI Payment</p>
@@ -115,6 +152,50 @@
             let qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
             document.getElementById('qrCode').src = qrCodeUrl;
         }
+
+        // Function to share via WhatsApp
+        function shareViaWhatsApp() {
+            let cusNum = document.getElementById('cusNum').value;
+            let name = document.getElementById('name').value;
+            let area = document.getElementById('area').value;
+            let grpNum = document.getElementById('grpNum').value;
+            let dueDate = document.getElementById('dueDate').value;
+            let dueAmount = document.getElementById('dueAmount').value;
+            let paidDate = document.getElementById('paidDate').value;
+
+            let receiptDetails = `Receipt Details:\nCustomer: ${cusNum}\nName: ${name}\nArea: ${area}\nGroup: ${grpNum}\nDue Date: ${dueDate}\nDue Amount: ${dueAmount}\nPaid Date: ${paidDate}`;
+            let whatsappUrl = `https://wa.me/?text=${encodeURIComponent(receiptDetails)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Function to share via SMS
+        function shareViaSMS() {
+            let cusNum = document.getElementById('cusNum').value;
+            let name = document.getElementById('name').value;
+            let area = document.getElementById('area').value;
+            let grpNum = document.getElementById('grpNum').value;
+            let dueDate = document.getElementById('dueDate').value;
+            let dueAmount = document.getElementById('dueAmount').value;
+            let paidDate = document.getElementById('paidDate').value;
+
+            let receiptDetails = `Receipt Details:\nCustomer: ${cusNum}\nName: ${name}\nArea: ${area}\nGroup: ${grpNum}\nDue Date: ${dueDate}\nDue Amount: ${dueAmount}\nPaid Date: ${paidDate}`;
+            let smsUrl = `sms:?body=${encodeURIComponent(receiptDetails)}`;
+            window.open(smsUrl, '_blank');
+        }
+
+        // Function to save as PDF
+        function saveAsPDF() {
+            const receipt = document.getElementById('receipt');
+            const opt = {
+                margin: 1,
+                filename: 'receipt.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().from(receipt).set(opt).save();
+        }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 </body>
 </html>
